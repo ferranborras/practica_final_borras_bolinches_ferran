@@ -1,2 +1,4 @@
 def mean(data):
-    pass
+    print("hola mundo")
+
+mean(1)
