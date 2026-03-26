@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import math
 
 
 def media_evolve(lista_datos: list):
@@ -59,7 +58,7 @@ def desviacion_evolve(lista_datos: list):
         print("No se han proporcionado suficientes datos")
         return None
 
-    return math.sqrt(varianza_evolve(lista_datos))
+    return varianza_evolve(lista_datos)**0.5
 
 
 def IQR_evolve(lista_datos: list):
