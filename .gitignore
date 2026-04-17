@@ -26,8 +26,11 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Data
-data
+# pycache
+__pycache__
+
+# src
+/src
 
 # venv
 venv_estadistica
