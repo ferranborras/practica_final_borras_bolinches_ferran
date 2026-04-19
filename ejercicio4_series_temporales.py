@@ -39,6 +39,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import os
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.seasonal import seasonal_decompose
+from statsmodels.tsa.stattools import adfuller
+from scipy.stats import jarque_bera, norm
 
 # Crear carpeta de salida si no existe
 os.makedirs("output", exist_ok=True)
@@ -114,8 +118,22 @@ def visualizar_serie(serie):
     - Añade título, etiquetas de ejes y una cuadrícula suave
     - Guarda con plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches='tight')
     """
-    # TODO: Implementa la visualización de la serie
-    pass
+    # Implementa la visualización de la serie
+    fig, ax = plt.subplots(figsize=(14, 4))
+
+    # Serie temporal
+    ax.plot(serie.index, serie.values)
+
+    ax.set_title("Serie temporal completa") # Título
+    ax.set_xlabel("Fecha") # Etiqueta X
+    ax.set_ylabel("Valor") # Etiqueta Y
+
+    # Cuadrícula
+    ax.grid(True, alpha=0.3)
+
+    # Guardamos la imagen
+    plt.savefig("output/ej4_serie_original.png", dpi=150, bbox_inches="tight")
+    plt.close()
 
 
 # =============================================================================
@@ -144,11 +162,23 @@ def descomponer_serie(serie):
     - resultado.plot() genera los 4 subgráficos automáticamente
     - Guarda la figura con fig.savefig(...)
     """
-    # TODO: Implementa la descomposición
+    # Implementa la descomposición
     # resultado = seasonal_decompose(...)
     # fig = resultado.plot()
     # ...
-    pass
+    
+    resultado = seasonal_decompose(serie, model='additive', period=365)
+
+    # Creamos el gráfico
+    fig = resultado.plot()
+    fig.set_size_inches(14, 8)
+
+    # Guardamos la imagen
+    plt.savefig("output/ej4_descomposicion.png", dpi=150, bbox_inches="tight")
+    plt.close()
+
+    return resultado # Objeto que contiene los componentes en los que se descompone la serie
+
 
 
 # =============================================================================
@@ -186,31 +216,55 @@ def analizar_residuo(residuo):
     - ACF / PACF:
         from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
     """
-    # TODO: Limpia el residuo (elimina NaN al inicio/fin)
-    residuo_limpio = None  # ← residuo.dropna()
+    # Limpia el residuo (elimina NaN al inicio/fin)
+    residuo_limpio = residuo.dropna()
 
-    # TODO: Calcula estadísticos básicos
-    media    = None
-    std      = None
-    asimetria = None
-    curtosis  = None
+    # Calcula estadísticos básicos
+    media    = residuo_limpio.mean()
+    std      = residuo_limpio.std()
+    asimetria = residuo_limpio.skew()
+    curtosis  = residuo_limpio.kurtosis()
 
+    print(f"{"="*20}\nCálculos estaditicos\n{"="*20}")
+    print("Mean: ", media)
+    print("Std: ", std)
+    print("Asimetria: ", asimetria)
+    print("Curtosis: ", curtosis)
 
-    # TODO: Test de estacionariedad (ADF)
-    # from statsmodels.tsa.stattools import adfuller
-    # resultado_adf = adfuller(residuo_limpio)
-    # p_adf = resultado_adf[1]
+    # Test de estacionariedad (ADF)
+    resultado_adf = adfuller(residuo_limpio)
+    p_adf = resultado_adf[1] # < 0.05 -> serie estacionaria | > 0.05 -> serie no estacionaria
+    stat = resultado_adf[0]
 
-    # TODO: Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
-    pass
+    print("\nEstadístico ADF: ", stat)
+    print("P-Value: ", p_adf)
 
-    # TODO: Histograma del residuo con curva normal superpuesta
+    # Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
+
+    plot_acf(residuo_limpio, ax=ax1, lags=40)
+    ax1.set_title("ACF del residuo")
+
+    plot_pacf(residuo_limpio, ax=ax2, lags=40)
+    ax2.set_title("PACF del residuo")
+
+    plt.tight_layout()
+    plt.savefig("output/ej4_acf_pacf.png", dpi=150, bbox_inches="tight")
+    plt.close()
+
+    # Histograma del residuo con curva normal superpuesta
     # → output/ej4_histograma_ruido.png
     # Pista: usa scipy.stats.norm.pdf para la curva teórica
-    pass
+    plt.figure(figsize=(8, 4))
 
-    # TODO: Guardar estadísticos en output/ej4_analisis.txt
-    pass
+    plt.hist(residuo_limpio, bins=30, density=True, alpha=0.6)
+
+    x = np.linspace(residuo_limpio.min(), residuo_limpio.max(), 200)
+    plt.plot(x, norm.pdf(x, media, std))
+
+    plt.title("Histograma del residuo + distribución normal")
+    plt.savefig("output/ej4_histograma_ruido.png", dpi=150, bbox_inches="tight")
+    plt.close()
 
 
 # =============================================================================
@@ -264,7 +318,6 @@ if __name__ == "__main__":
         "ej4_descomposicion.png",
         "ej4_acf_pacf.png",
         "ej4_histograma_ruido.png",
-        "ej4_analisis.txt",
     ]
     for s in salidas:
         existe = os.path.exists(f"output/{s}")

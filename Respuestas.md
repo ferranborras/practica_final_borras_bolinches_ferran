@@ -17,7 +17,7 @@
 > | float64 | category | category | category | float64 | float64 | int64 | float64 | float64 | float64 |
 >
 > Este dataset no contiene valores nulos por lo que el porcentaje de nulos en cada uno de los campos es 0%.
->
+
 > ### B) Estadísticos descriptivos de variables numéricas
 >
 > Mediante `.descrbe()` y otras funciones adicionales (`.median()`, `.var()`, `.mode()`, `.skew()` y `.kurt()`) obtenemos la información correspondfiente a la media, mediana, moda, desviación típica, varianza, mínimo, máximo y cuartiles de las variables numéricas.
@@ -25,7 +25,7 @@
 > Además calculamos el rango intercuartílico (IQR) de la variable objetivo calculando **Q1** y **Q3** mediante `.quantile(0.25)` y `.quantile(0.75)`.
 > $$IQR = Q3 - Q1$$
 > **IQR de _price_ (variable objetivo):** 4374.25
->
+
 > ### C) Distribuciones
 >
 > Se han creado las imágenes de los histogramas mostrando también la media y la mediana para representar la asimetría de las vaiables numéricas. Se observa una fuerte asimetría en la distribución del campo `price`, mientras que la dimensión `x` muestra una distribución practicamente normal un poco aplanada (kurtosis < -0.5) y ligeramente sesgada a la derecha (skewness entre 0 y 0.5).
@@ -40,7 +40,7 @@
 > Por último, como muchas de las variables muestran distribuciones asimétricas se ha optado por utilizar el método de rango intercuartílico (IQR) para la detección de outliers, por su robustez frente a distribuciones no normales y valores extremos.
 >
 > Durante el análisis se ha detectado registros erróneos en los campos correspondientes a las dimensiones del diamante (`x`, `y`, `z`) por lo que se ha decidido eliminar estos valores para limpiar el dataset.
->
+
 > ### D) Variables categóricas
 >
 > Se ha analizado la distribución de las variables categóricas >mediante sus frecuencias relativas.
@@ -50,7 +50,7 @@
 > La variable _`color`_ muestra una distribución bastante uniforme >entre sus categorías, sin que ninguna destaque de forma dominante..
 >
 > Por último, la variable _`clarity`_ presenta un mayor desbalance, >con categorías como _`SI1`_ y _`VS2`_ representando el 47% de los >registros, mientras que otras como _`IF`_ o _`I1`_ están poco >representadas sin alcanzar el 0.05% de los datos.
->
+
 > ### E) Correlaciones
 >
 > Generamos un heatmap de las variables numéricas y observamos como los campos `price`, `carat` (peso) y las dimensiones (`x`, `y`, `z`) estan fuertemente correlacionadas (r entre 0.8 y 1.0) lo cual es lógico ya que el peso depende de las dimensiones en el mismo material, y el precio parece depender en gran medida del peso y, por ende, de las dimensiones.
@@ -76,6 +76,8 @@
 > |   x    |   0.38   |  -0.62   |     32      | Distribución es prácticamente normal pero con tendencia aplanada (kurtosis ≈/< 0) sesgada ligeramente a la derecha (skewness entre 0 y 0.5) |
 > |   y    |   2.43   |  91.21   |     29      | Distribución es fuertemente leptocúrtica (kurtosis > 0) fuertemente sesgada a la derecha (skewness > 1)                                     |
 > |   z    |   1.52   |  47.09   |     49      | Distribución es fuertemente leptocúrtica (kurtosis > 0) muy sesgada a la derecha (skewness > 1)                                             |
+>
+> ---
 >
 > Durante el análisis de los outliers se han detectado registros iguales a 0 en los campos `x`, `y` y `z`, que representan las dimensiones del diamante.
 > No considero que estos valores como outliers válidos, sino errores de registro, ya que son mediciones incompatibles con el peso (`carat`) registrado, que resulta físicamente imposible.
@@ -108,7 +110,7 @@
 > Finalmente se aplica un escalado (`StandardScaler`) ajustado únicamente sobre los datos de entrenamiento para respetar que "se desconocen" los datos de test. Luego se aplica el escalado sobre los datos de test para mantenerlos en la misma escala.
 >
 > Las variables resultantes son `X_train`, `X_test`, `y_train` y `y_test`.
->
+
 > ### 2.2 Modelo A — Regresión Lineal (LinearRegression)
 >
 > Tras generar el grafico de residuos es notable un patron de residuos "enfermos" con una distribucíón en forma de "U". Y aunque R² mostraba un valor muy alto, los errores también eran elevados lo que era una clara señal de que el modelo no estaba funcioncionando correctamente.
@@ -125,10 +127,12 @@
 
 **Pregunta 2.1** — Indica los valores de MAE, RMSE y R² de la regresión lineal sobre el test set. ¿El modelo funciona bien? ¿Por qué?
 
-> - **MAE:** 0.27
-> - **RMSE:** 0.33
-> - **R²:** 0.8914
-
+> **MAE:** 0.27 <br>
+> **RMSE:** 0.33 <br>
+> **R²:** 0.8914 <br>
+>
+> ---
+>
 > Estos resultados indican un buen rendimiento del modelo. Este coeficiente de determinación implica que el modelo es capaz de explicar el 89% de la variabilidad de los precios.
 > Además, los errores MAE y RMSE son relativamente bajos lo que supone un error bastante reducirdo por predicción.
 >
@@ -200,25 +204,75 @@
 
 ---
 
-Añade aqui tu descripción y analisis:
+> En este ejercicio se ha trabajado sobre una serie temporal sintética que, para estudiarla y analizar su estructura, primeramente se ha visualizado en una gráfica.
+>
+> ![ej4_serie_original.png](/output/ej4_serie_original.png)
+>
+> A continuación, se ha aplicado una descomposición aditiva mediante `seasonal_decompose`, lo que ha permitido separar la serie en sus componentes principales: `tendencia`, `estacionalidad` y `residuo`.
+>
+> En este caso se pueden apreciar más claramente las estacionalidades anuales y la tendencia creciente de la serie.
+>
+> Finalmente, se ha analizado el residuo con el objetivo de comprobar si se comporta como un ruido ideal, donde los resultados de las medidas estadísticas y el test ADF muestran una distribución del ruido normal:
+>
+> **CÁLCULOS ESTADÍSTICOS:** <p>
+> Mean: `0.1270780360985611` <br>
+> Std: `3.2220429624963787` <br>
+> Asimetria: `-0.050917463365325315` <br>
+> Curtosis: `-0.06102752286356239` <br>
+>
+> **TEST DE NORMALIDAD (ADF):** <p>
+> Estadístico ADF: `-39.916048410099215` <br>
+> P-Value: `0.0` <br>
+>
+> ---
+>
+> ![ej4_histograma_ruido.png](/output/ej4_histograma_ruido.png)
+>
+> Finalmente, mediante los gráficos (ACF y PACF) se visualiza que no existe autocorrelación indicando que se trata de un ruido puro e ideal.
+>
+> ![ej4_acf_pacf.png](/output/ej4_acf_pacf.png)
 
 ---
 
 **Pregunta 4.1** — ¿La serie presenta tendencia? Descríbela brevemente (tipo, dirección, magnitud aproximada).
 
-> _Escribe aquí tu respuesta_
+> La serie presenta una tendencia de tipo lineal pues se puede aproximar mediante una Ecuacion de la Recta, con dirección creciente de manera bastante constante. La magnitud aproximada del cambio es moderada, con un incremento de alrededor de 100 unidades entre el inicio y el final de la serie (+5 años), lo que indica un crecimiento no muy pronunciado.
 
 **Pregunta 4.2** — ¿Hay estacionalidad? Indica el periodo aproximado en días y la amplitud del patrón estacional.
 
-> _Escribe aquí tu respuesta_
+> La serie muestra estacionalidad clara con un periodo aparentemente anual por lo que du periodo aproximado puede ser de 365 días. La amplitud del patrón es moderada (entre 10 o 15 unidades), con oscilaciones regulares alrededor de la tendencia principal pero de amplitud mucho más inferior (<5 unidades aproximadamente).
 
 **Pregunta 4.3** — ¿Se aprecian ciclos de largo plazo en la serie? ¿Cómo los diferencias de la tendencia?
 
-> _Escribe aquí tu respuesta_
+> Unque en la implementación de la serie se defina un ciclo de aproximadamente 4 años, en las gráficas es muy dificil observar dicho ciclo por su leve pronunciación y la presencia de la tendencia creciente, la estacionalidad y el ruido.
+>
+> Podemos distinguir los ciclos de la tendencia puesto que los ciclos no representan un crecimiento continuo, sino fluctuaciones repetitivas alrededor de la dirección de la tendencia.
+>
+> Aunque sospecho de que pudiese ser producto de otro factor, en la gráfica de la componente de tendencia se puede encontrar una ligera oscilación alrededor de la marca de los 4 años que podría ser debido a un ciclo muy leve de gran duración.
 
 **Pregunta 4.4** — ¿El residuo se ajusta a un ruido ideal? Indica la media, la desviación típica y el resultado del test de normalidad (p-value) para justificar tu respuesta.
 
-> _Escribe aquí tu respuesta_
+> **CÁLCULOS ESTADÍSTICOS:** <p>
+> Mean: `0.1270780360985611` <br>
+> Std: `3.2220429624963787` <br>
+> Asimetria: `-0.050917463365325315` <br>
+> Curtosis: `-0.06102752286356239` <br>
+>
+> **TEST DE NORMALIDAD:** <p>
+> Estadístico ADF: `-39.916048410099215` <br>
+> P-Value: `0.0` <br>
+>
+> ---
+>
+> El residuo presenta una media cercana a 0 (0.127) y una desviación típica baja de 3.22, lo que indica que está aproximadamente centrado en torno a 0 y con una variabilidad relativamente constante. La asimetría y curtosis próximas a 0 indican una distribución del error normal. Además, el test ADF muestra p-value = 0, lo que indica que el residuo es estacionario.
+>
+> ![ej4_histograma_ruido.png](/output/ej4_histograma_ruido.png)
+>
+> Finalmente, los gráficos ACF y PACF muestran valores muy cercanos a cero para todos los _lags_ y un patrón prácticamente idéntico entre ambos. Esto indica que no hay autocorrelación en el residuo.
+>
+> ![ej4_acf_pacf.png](/output/ej4_acf_pacf.png)
+>
+> Por tanto, la media = 0, la varianza constante y la inexistencia de autocorrelación significativa indican que se trata de un ruido pro e ideal.
 
 ---
 
