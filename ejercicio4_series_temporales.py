@@ -225,19 +225,19 @@ def analizar_residuo(residuo):
     asimetria = residuo_limpio.skew()
     curtosis  = residuo_limpio.kurtosis()
 
-    print(f"{"="*20}\nCálculos estaditicos\n{"="*20}")
-    print("Mean: ", media)
-    print("Std: ", std)
-    print("Asimetria: ", asimetria)
-    print("Curtosis: ", curtosis)
+    # print(f"{"="*20}\nCálculos estaditicos\n{"="*20}")
+    # print("Mean: ", media)
+    # print("Std: ", std)
+    # print("Asimetria: ", asimetria)
+    # print("Curtosis: ", curtosis)
 
     # Test de estacionariedad (ADF)
     resultado_adf = adfuller(residuo_limpio)
     p_adf = resultado_adf[1] # < 0.05 -> serie estacionaria | > 0.05 -> serie no estacionaria
     stat = resultado_adf[0]
 
-    print("\nEstadístico ADF: ", stat)
-    print("P-Value: ", p_adf)
+    # print("\nEstadístico ADF: ", stat)
+    # print("P-Value: ", p_adf)
 
     # Gráfico ACF y PACF del residuo → output/ej4_acf_pacf.png
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))

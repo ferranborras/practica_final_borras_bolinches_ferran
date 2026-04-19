@@ -128,9 +128,7 @@ def main():
     grafico_residuos(y_test, y_pred, OUTPUT_PATH_RESIDUOS)
 
     # Variables más influyentes
-    print(top_variables_influyentes(model, X))
-
-    print("\nPrediction finished.")
+    #print(top_variables_influyentes(model, X))
 
 
 if __name__ == "__main__":

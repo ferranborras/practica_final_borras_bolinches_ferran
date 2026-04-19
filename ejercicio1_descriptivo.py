@@ -20,8 +20,8 @@ def resumen_estructural(df):
     Imprime en pantalla información sobre el dataframe como su dimensión,
     tamaño, tipos de datos y cantidad de nulos por columna
     """
-    print("\n=== RESUMEN ESTRUCTURAL ===\n")
-    df.info()
+    #print("\n=== RESUMEN ESTRUCTURAL ===\n")
+    #df.info()
 
 def categorize_colums(df):
     """
@@ -36,7 +36,7 @@ def estadisticos_descriptivos(df, output):
     Genera un csv con un análisis descriptivo de las variables numéricas
     y muestra el IQR del target (price)
     """
-    print("\n=== ESTADÍSTICOS DESCRIPTIVOS ===\n")
+    #print("\n=== ESTADÍSTICOS DESCRIPTIVOS ===\n")
     num_cols = df.select_dtypes(include=np.number).columns # Seleccionar las columnas de tipo numérico
 
     # .describe proporciona algunos valores como count, mean, min, max y cuartiles
@@ -55,7 +55,7 @@ def estadisticos_descriptivos(df, output):
     Q1 = df["price"].quantile(0.25)
     Q3 = df["price"].quantile(0.75)
     IQR = Q3 - Q1
-    print("IQR price:", IQR)
+    #print("IQR price:", IQR)
 
 def histogramas(df, output):
     """
@@ -97,10 +97,6 @@ def boxplots_target(df, output):
     """
     cat_cols = df.select_dtypes(include="category").columns
 
-    if len(cat_cols) == 0:
-        print("No hay variables categóricas")
-        return
-
     fig, axes = plt.subplots(len(cat_cols), 1, figsize=(10, 5 * len(cat_cols)))
 
     if len(cat_cols) == 1:
@@ -140,7 +136,7 @@ def detect_outliers(df):
     for col in num_cols:
         outliers_count[col] = len(get_column_outliers(df, col))
     
-    print("\nOutliers count:\n", outliers_count)
+    #print("\nOutliers count:\n", outliers_count)
 
 def clean_invalid_values(df):
     """
@@ -171,8 +167,7 @@ def analizar_categoricas(df):
             "frecuencia_absoluta": abs_freq,
             "frecuencia_relativa": rel_freq
         })
-
-        print(f"\n{resultados[col]}")
+        #print(f"\n{resultados[col]}")
 
     return resultados
 
@@ -226,8 +221,8 @@ def top_3_correlaciones(corr, target="price"):
     top3 = corr_target.abs().sort_values(ascending=False).head(3) # Ordenamos de manera descendiente y seleccionamos los 3 primeros
     # Como la correlación es absoluta ignoramos el signo de R con .abs()
 
-    print("\nTop 3 variables más correlacionadas con price:")
-    print(top3)
+    # print("\nTop 3 variables más correlacionadas con price:")
+    # print(top3)
 
     return top3
 
@@ -244,10 +239,6 @@ def detectar_multicolinealidad(corr, threshold=0.9):
         for j in range(i + 1, len(cols)):
             if abs(corr.iloc[i, j]) > threshold: # Si la coeficiente absoluto sobrepasa el límite se añade la pareja
                 pares.append((cols[i], cols[j], corr.iloc[i, j]))
-
-    print("\nPares con posible multicolinealidad:")
-    for p in pares:
-        print(p)
 
     return pares
 
